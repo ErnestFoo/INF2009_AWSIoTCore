@@ -14,7 +14,7 @@ client = mqtt.Client()
 client.on_connect = on_connect
 client.tls_set(ca_certs='./rootCA.pem', certfile='./aws-certificate.pem.crt', keyfile='./aws-private.pem.key', tls_version=ssl.PROTOCOL_SSLv23)
 client.tls_insecure_set(True)
-client.connect("xxxxxxxx-ats.iot.ap-southeast-1.amazonaws.com", 8883, 60) #Copy end point from your AWS IoT Core Console
+client.connect("a1j55hecaf8q8b-ats.iot.us-east-1.amazonaws.com", 8883, 60) #Copy end point from your AWS IoT Core Console
 
 
 def justADummyFunction(Dummy):
@@ -22,8 +22,11 @@ def justADummyFunction(Dummy):
         # This is where you can put your edge analytics to generate data from your sensors
         # processed/raw data can be sent to AWS IoT core for further analytics/processing on the cloud
         message = "Hello from INF2009 RaspberryPi Device#1"
+        message = json.dumps(
+            {"time": int(time.time()), "quality": "GOOD", "hostname": "rpiedge", "value": psutil.cpu_percent()},
+            indent=2)
         print(message)
-        client.publish("device/data", payload=message , qos=0, retain=False)
+        client.publish("device/data", payload=message, qos=0, retain=False)
         time.sleep(5)
 
 thread.start_new_thread(justADummyFunction,("Create Thread",))
